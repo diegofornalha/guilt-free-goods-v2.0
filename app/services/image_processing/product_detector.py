@@ -10,6 +10,7 @@ This module provides AI-powered product recognition features:
 """
 
 from typing import Dict, List, Optional, Tuple
+import spacy
 from google.cloud import vision
 import io
 import logging
@@ -117,12 +118,27 @@ class ProductDetector:
             # First element contains all text
             text = result.text_annotations[0].description if result.text_annotations else ""
             
-            # TODO: Implement brand name extraction from text using NLP
-            # This would involve checking against a database of known brands
+            # Extract brand names using spaCy NLP
+            if text:
+                nlp = spacy.load('en_core_web_sm')
+                doc = nlp(text)
+                
+                # Extract proper nouns (potential brand names)
+                potential_brands = [ent.text for ent in doc.ents if ent.label_ in ['ORG', 'PRODUCT']]
+                potential_brands.extend([token.text for token in doc if token.pos_ == 'PROPN'])
+                
+                # Add extracted brands with lower confidence
+                for brand in set(potential_brands):
+                    brands.append({
+                        'name': brand,
+                        'confidence': 0.6,  # Lower confidence for NLP-extracted brands
+                        'source': 'text'
+                    })
             
         return {
             'detected_brands': brands,
-            'extracted_text': text if 'text' in locals() else ""
+            'extracted_text': text if 'text' in locals() else "",
+            'potential_brands': list(set(potential_brands)) if 'potential_brands' in locals() else []
         }
     
     def _assess_condition(self, result) -> Dict:
@@ -219,10 +235,42 @@ class ProductDetector:
             if main_color.score < 0.5:
                 details.append("Color fading detected")
             
-        # Add other relevant details
-        # TODO: Implement more sophisticated condition detection
+        # Analyze image quality metrics
+        if main_color.score < 0.3:
+            details.append("Significant color degradation")
         
+        # Check color consistency
+        color_variance = sum(abs(c.score - main_color.score) for c in colors[1:])
+        if color_variance > 1.0:
+            details.append("Uneven coloring or discoloration")
+            
+        # Check for potential damage indicators
+        if len(colors) > 5 and max(c.pixel_fraction for c in colors) < 0.3:
+            details.append("Possible surface irregularities detected")
+            
+        # Add wear level assessment
+        wear_level = self._assess_wear_level(properties)
+        if wear_level:
+            details.append(f"Wear level: {wear_level}")
+            
         return details
+        
+    def _assess_wear_level(self, properties) -> Optional[str]:
+        """Assess wear level based on image properties."""
+        colors = properties.dominant_colors.colors
+        
+        # Calculate wear indicators
+        color_uniformity = max(c.pixel_fraction for c in colors)
+        color_contrast = max(c.score for c in colors) - min(c.score for c in colors)
+        
+        if color_uniformity > 0.8 and color_contrast < 0.2:
+            return "Minimal wear"
+        elif color_uniformity > 0.6:
+            return "Light wear"
+        elif color_uniformity > 0.4:
+            return "Moderate wear"
+        else:
+            return "Heavy wear"
     
     def _find_reference_objects(self, objects) -> List[Dict]:
         """Find objects that can be used as size reference."""
@@ -302,35 +350,80 @@ class ProductDetector:
     def _calculate_authenticity_score(self, brand_results: Dict, 
                                     properties) -> float:
         """Calculate authenticity score based on brand detection and image quality."""
-        # Start with base score from brand detection confidence
-        if brand_results['detected_brands']:
-            base_score = max(brand.get('confidence', 0) 
-                           for brand in brand_results['detected_brands'])
-        else:
-            base_score = 0.4  # Lower base score if no brand detected
+        # Calculate brand detection confidence
+        brand_scores = [b.get('confidence', 0) for b in brand_results['detected_brands']]
+        brand_confidence = max(brand_scores, default=0.4)  # Default if no brands detected
         
-        # Adjust based on image quality
+        # Analyze image quality as authenticity indicator
         quality_score = self._calculate_quality_score(properties)
         
-        # Weighted average
-        return (base_score * 0.7 + quality_score * 0.3)
+        # Check for consistent brand appearance
+        brand_consistency = self._check_brand_consistency(brand_results)
+        
+        # Calculate final authenticity score with weighted components
+        weights = {
+            'brand_confidence': 0.5,
+            'quality': 0.3,
+            'consistency': 0.2
+        }
+        
+        auth_score = (
+            weights['brand_confidence'] * brand_confidence +
+            weights['quality'] * quality_score +
+            weights['consistency'] * brand_consistency
+        )
+        
+        return min(1.0, auth_score)
     
     def _generate_verification_details(self, brand_results: Dict) -> List[str]:
         """Generate detailed authenticity verification report."""
         details = []
         
-        # Add brand detection details
+        # Add brand detection details with confidence levels
         if brand_results['detected_brands']:
             for brand in brand_results['detected_brands']:
+                confidence_level = "high" if brand['confidence'] > 0.8 else \
+                                 "medium" if brand['confidence'] > 0.6 else "low"
+                source = brand.get('source', 'visual')
                 details.append(
-                    f"Detected {brand['name']} brand with "
-                    f"{brand['confidence']*100:.1f}% confidence"
+                    f"Detected {brand['name']} brand with {confidence_level} confidence "
+                    f"({source} detection, {brand['confidence']*100:.1f}%)"
                 )
         else:
-            details.append("No brand logos detected")
+            details.append("Warning: No verified brands detected")
+            
+        # Add potential brand matches from text
+        if brand_results.get('potential_brands'):
+            details.append("Additional brand references found in text:")
+            for brand in brand_results['potential_brands']:
+                details.append(f"- Potential brand reference: {brand}")
         
-        # Add text-based verification details
-        if brand_results['extracted_text']:
-            details.append("Found brand-related text in image")
+        # Add verification status
+        if not brand_results['detected_brands']:
+            details.append("Authenticity verification: Insufficient brand information")
+        elif max(b['confidence'] for b in brand_results['detected_brands']) < 0.6:
+            details.append("Authenticity verification: Low confidence - manual review recommended")
+        else:
+            details.append("Authenticity verification: Passed automated checks")
         
         return details
+        
+    def _check_brand_consistency(self, brand_results: Dict) -> float:
+        """Check consistency of brand detection across methods."""
+        visual_brands = {b['name'].lower() for b in brand_results['detected_brands'] 
+                        if b.get('source', 'visual') == 'visual'}
+        text_brands = {b['name'].lower() for b in brand_results['detected_brands'] 
+                      if b.get('source', 'text') == 'text'}
+        
+        # Calculate consistency score
+        if not visual_brands and not text_brands:
+            return 0.0
+        elif not visual_brands or not text_brands:
+            return 0.5
+        
+        # Check for brand name matches across methods
+        matches = visual_brands.intersection(text_brands)
+        consistency = len(matches) / max(len(visual_brands), len(text_brands))
+        
+        
+        return consistency
