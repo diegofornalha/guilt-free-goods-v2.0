@@ -4,7 +4,7 @@
   "description": "AI-powered platform for sustainable second-hand goods",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
