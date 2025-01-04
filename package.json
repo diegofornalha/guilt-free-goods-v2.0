@@ -16,28 +16,38 @@
   },
   "dependencies": {
     "@google-cloud/vision": "^4.x",
+    "@radix-ui/react-dialog": "^1.1.4",
+    "@radix-ui/react-label": "^2.1.1",
+    "@radix-ui/react-slider": "^1.2.2",
+    "@radix-ui/react-switch": "^1.1.2",
+    "@radix-ui/react-toggle": "^1.1.1",
     "@tensorflow/tfjs": "^4.x",
     "@trpc/client": "^10.38.5",
     "@trpc/server": "^10.38.5",
     "cheerio": "^1.x",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.469.0",
     "next": "^13.x",
     "openai": "^4.x",
     "prisma": "^4.x",
     "puppeteer": "^19.x",
     "react": "^18.x",
-    "react-dom": "^18.x"
+    "react-dom": "^18.x",
+    "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@testing-library/react": "^14.x",
-    "@types/node": "^18.x",
-    "@types/react": "^18.x",
+    "@types/node": "^18.19.69",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^19.0.2",
     "eslint": "^8.57.1",
     "eslint-plugin-react": "^7.37.3",
     "globals": "^15.14.0",
     "jest": "^29.x",
     "prettier": "^2.x",
-    "typescript": "^5.x"
+    "typescript": "^5.7.2"
   },
   "keywords": [
     "sustainability",
