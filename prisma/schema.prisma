@@ -83,3 +83,20 @@ model Order {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 }
+
+model Conversation {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  messages  Message[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id              Int         @id @default(autoincrement())
+  conversationId  Int
+  conversation    Conversation @relation(fields: [conversationId], references: [id])
+  content         String
+  sender          String
+  createdAt       DateTime    @default(now())
+}
