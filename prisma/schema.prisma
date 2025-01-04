@@ -1,0 +1,85 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  items     Item[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Item {
+  id                String    @id @default(uuid())
+  title             String
+  description       String?
+  price            Decimal   @default(0.00)
+  condition        String?
+  brand            String?
+  model            String?
+  imageUrls        String[]  // Array of image URLs
+  detectionScore   Float?    // AI confidence score
+  userId           String
+  user             User      @relation(fields: [userId], references: [id])
+  listings         Listing[]
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  
+  // AI-related fields
+  categoryConfidence Float?
+  detectedCategory  String?
+  detectedBrand     String?
+  qualityScore      Float?   // Image quality assessment
+  dimensions        Json?    // Detected item dimensions
+  defects           Json?    // Detected defects or condition issues
+}
+
+model Listing {
+  id                String              @id @default(uuid())
+  itemId            String
+  item              Item                @relation(fields: [itemId], references: [id])
+  marketplace       String              // e.g., "ebay", "amazon"
+  status            String?             // e.g., "active", "sold", "draft"
+  externalId        String?             // ID on the marketplace platform
+  price             Decimal             @default(0.00)
+  marketResearch    MarketResearchData[]
+  orders            Order[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  // Platform-specific data
+  platformData      Json?               // Store platform-specific listing details
+  performanceMetrics Json?              // Views, likes, engagement data
+}
+
+model MarketResearchData {
+  id                String    @id @default(uuid())
+  listingId         String
+  listing           Listing   @relation(fields: [listingId], references: [id])
+  priceTrend        Json?     // Historical price data
+  competitorPrices  Json?     // Current competitor pricing
+  demandMetrics     Json?     // Search volume, seasonal trends
+  recommendations   Json?     // AI-generated pricing recommendations
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model Order {
+  id                String    @id @default(uuid())
+  listingId         String
+  listing           Listing   @relation(fields: [listingId], references: [id])
+  quantity          Int       @default(1)
+  totalPrice        Decimal   @default(0.00)
+  status            String    // e.g., "pending", "shipped", "delivered"
+  shippingDetails   Json?     // Shipping information
+  buyerDetails      Json?     // Buyer information
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}

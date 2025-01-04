@@ -4,9 +4,19 @@ from fastapi.responses import JSONResponse
 from typing import List
 import os
 
-from .routers import marketplace
+from .routers import marketplace, items
+from .db import init_db, close_db
 
 app = FastAPI(title="Guilt Free Goods API")
+
+# Database lifecycle events
+@app.on_event("startup")
+async def startup_event():
+    await init_db()
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    await close_db()
 
 # Register global exception handlers
 @app.exception_handler(HTTPException)
@@ -36,6 +46,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(marketplace.router)
+app.include_router(items.router, prefix="/api/items", tags=["items"])
 
 @app.get("/")
 async def root():
