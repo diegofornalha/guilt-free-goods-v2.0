@@ -4,15 +4,43 @@
   "description": "AI-powered platform for sustainable second-hand goods",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "echo \"No development script specified\"",
-    "build": "echo \"No build script specified\""
+    "test": "jest",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "train:image": "python scripts/train_image_model.py",
+    "train:nlp": "python scripts/train_nlp_model.py",
+    "scrape:market": "node scripts/market_scraper.js",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@tensorflow/tfjs": "^4.x",
+    "@google-cloud/vision": "^4.x",
+    "next": "^13.x",
+    "react": "^18.x",
+    "react-dom": "^18.x",
+    "openai": "^4.x",
+    "puppeteer": "^19.x",
+    "cheerio": "^1.x",
+    "prisma": "^4.x",
+    "trpc": "^10.x"
+  },
+  "devDependencies": {
+    "@types/react": "^18.x",
+    "@types/node": "^18.x",
+    "typescript": "^5.x",
+    "jest": "^29.x",
+    "@testing-library/react": "^14.x",
+    "eslint": "^8.x",
+    "prettier": "^2.x"
   },
   "keywords": [
     "sustainability",
     "second-hand",
     "ai",
-    "e-commerce"
+    "e-commerce",
+    "machine-learning"
   ],
   "author": "",
   "license": "MIT"

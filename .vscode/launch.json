@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug API",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/index.js"
+    },
+    {
+      "name": "Python: Image Recognition Training",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/ai/image_recognition/train.py"
+    },
+    {
+      "name": "Python: Market Analysis",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/ai/market_analysis/analyze.py"
+    },
+    {
+      "name": "Debug Web Scraper",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/scrapers/index.js"
+    }
+  ]
+}

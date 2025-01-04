@@ -1,0 +1,5 @@
+[core]
+    remote = s3-storage
+['remote "s3-storage"']
+    url = s3://guilt-free-goods-models/
+    version_aware = true
