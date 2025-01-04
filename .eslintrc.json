@@ -2,7 +2,8 @@
   "env": {
     "browser": true,
     "es2021": true,
-    "node": true
+    "node": true,
+    "commonjs": true
   },
   "extends": [
     "eslint:recommended",
@@ -21,16 +22,46 @@
     "react",
     "@typescript-eslint"
   ],
+  "version": "18.2.0",
   "settings": {
     "react": {
-      "version": "detect"
+      "version": "18.2.0",
+      "createClass": "createReactClass",
+      "pragma": "React",
+      "fragment": "Fragment"
     }
   },
   "rules": {
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    "no-undef": "error",
+    "no-unused-vars": "warn",
+    "no-empty": "warn",
+    "no-prototype-builtins": "warn",
+    "no-case-declarations": "warn",
+    "no-control-regex": "warn",
+    "no-func-assign": "warn",
+    "react/prop-types": "warn"
   },
   "ignorePatterns": [
-    ".next/**/*",
-    "node_modules/**/*"
-  ]
+    ".next/**",
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    "**/*.generated.*",
+    "**/chunks/**",
+    "**/static/**"
+  ],
+  "globals": {
+    "module": "readonly",
+    "require": "readonly",
+    "exports": "readonly",
+    "process": "readonly",
+    "Buffer": "readonly",
+    "__dirname": "readonly",
+    "global": "readonly",
+    "__REACT_DEVTOOLS_GLOBAL_HOOK__": "readonly",
+    "setImmediate": "readonly",
+    "ActiveXObject": "readonly",
+    "_N_E": "readonly"
+  }
 }

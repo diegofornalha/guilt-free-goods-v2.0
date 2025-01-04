@@ -36,4 +36,4 @@ const monitoring = {
   }
 };
 
-module.exports = monitoring;
+export default monitoring;
