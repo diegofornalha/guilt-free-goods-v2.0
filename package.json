@@ -1,0 +1,19 @@
+{
+  "name": "guilt-free-goods",
+  "version": "1.0.0",
+  "description": "AI-powered platform for sustainable second-hand goods",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "echo \"No development script specified\"",
+    "build": "echo \"No build script specified\""
+  },
+  "keywords": [
+    "sustainability",
+    "second-hand",
+    "ai",
+    "e-commerce"
+  ],
+  "author": "",
+  "license": "MIT"
+}
