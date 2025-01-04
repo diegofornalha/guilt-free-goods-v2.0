@@ -2,6 +2,10 @@
 
 A full-stack AI web tool for sourcing and reselling second-hand goods to reduce landfill waste and promote sustainable consumption.
 
+## Overview
+
+This project aims to make sustainable shopping easier by leveraging AI technology to streamline the process of buying and selling second-hand goods.
+
 ## Project Structure
 
 ```
