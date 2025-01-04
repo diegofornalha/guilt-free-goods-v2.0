@@ -1,7 +1,8 @@
 {
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": true,
+    "source.organizeImports": true
   },
   "files.autoSave": "onFocusChange",
   "git.enableSmartCommit": true,
@@ -10,5 +11,25 @@
   "files.trimTrailingWhitespace": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.tabSize": 2,
-  "files.eol": "\n"
+  "files.eol": "\n",
+  "editor.suggestSelection": "first",
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+  "editor.multiCursorModifier": "ctrlCmd",
+  "editor.snippetSuggestions": "top",
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "workbench.colorTheme": "Default Dark+",
+  "[python]": {
+    "editor.formatOnType": true,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ms-python.python"
+  },
+  "github.copilot.enable": {
+    "*": true,
+    "yaml": true,
+    "plaintext": true,
+    "markdown": true
+  },
+  "python.analysis.typeCheckingMode": "basic",
+  "jupyter.sendSelectionToInteractiveWindow": true
 }
