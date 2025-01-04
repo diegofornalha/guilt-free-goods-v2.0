@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from typing import List
 import os
 
-from .routers import marketplace, items
+from .routers import marketplace, items, item_detection
 from .db import init_db, close_db
 
 app = FastAPI(title="Guilt Free Goods API")
@@ -56,39 +56,8 @@ async def root():
 async def health_check():
     return {"status": "healthy"}
 
-# Image Processing Routes
-@app.post("/api/images/optimize")
-async def optimize_image():
-    """
-    Endpoint for image quality optimization
-    To be implemented with quality_optimizer.py
-    """
-    return JSONResponse(
-        status_code=501,
-        content={"message": "Endpoint under development"}
-    )
-
-@app.post("/api/images/remove-background")
-async def remove_background():
-    """
-    Endpoint for background removal
-    To be implemented with background_processor.py
-    """
-    return JSONResponse(
-        status_code=501,
-        content={"message": "Endpoint under development"}
-    )
-
-@app.post("/api/images/detect-product")
-async def detect_product():
-    """
-    Endpoint for product detection
-    To be implemented with product_detector.py
-    """
-    return JSONResponse(
-        status_code=501,
-        content={"message": "Endpoint under development"}
-    )
+# Include item detection router
+app.include_router(item_detection.router)
 
 if __name__ == "__main__":
     import uvicorn
