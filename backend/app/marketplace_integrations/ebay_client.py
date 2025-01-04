@@ -8,8 +8,14 @@ from typing import Any, Dict, Optional
 import logging
 from datetime import datetime, timedelta
 
-from .marketplace_client import MarketplaceClient
-from .exceptions import AuthenticationError, MarketDataError, ParseError, HistoricalDataError
+from .base import MarketplaceClient
+from .exceptions import (
+    AuthenticationError,
+    MarketDataError,
+    ParseError,
+    HistoricalDataError,
+    MarketplaceError
+)
 
 logger = logging.getLogger(__name__)
 
@@ -153,3 +159,28 @@ class EbayClient(MarketplaceClient):
         except Exception as e:
             logger.error(f"Failed to fetch eBay price history: {str(e)}")
             raise HistoricalDataError(f"Failed to fetch price history from eBay: {str(e)}")
+
+    async def create_listing(self, listing_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Create a listing on eBay.
+        
+        Args:
+            listing_data: Dictionary containing listing details
+        
+        Returns: 
+            Dictionary containing eBay-specific response data
+        
+        Raises:
+            MarketplaceError: If listing creation fails
+        """
+        try:
+            # TODO: Implement actual eBay API integration
+            # For now, returning mock response for development
+            return {
+                "platform": "ebay",
+                "status": "created",
+                "external_id": "mock-ebay-id",
+                "url": "https://ebay.com/mock-listing"
+            }
+        except Exception as e:
+            logger.error(f"Failed to create eBay listing: {str(e)}")
+            raise MarketplaceError(f"Failed to create listing on eBay: {str(e)}")
