@@ -6,7 +6,7 @@ from .listing import Listing
 from .market_research import MarketResearchData
 from .order import Order
 from .shipment import Shipment
-from .analytics import AnalyticsData, AnalyticsSnapshot
+from .analytics import Analytics, AnalyticsSnapshot
 from .conversation import Conversation, Message
 
 __all__ = [
@@ -18,7 +18,7 @@ __all__ = [
     'MarketResearchData',
     'Order',
     'Shipment',
-    'AnalyticsData',
+    'Analytics',
     'AnalyticsSnapshot',
     'Conversation',
     'Message',

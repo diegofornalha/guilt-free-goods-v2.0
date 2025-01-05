@@ -1,8 +1,10 @@
+"""Database connection and client management."""
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from fastapi import Depends
 from typing import AsyncGenerator
 import os
+from .db_client import DatabaseClient, get_db_client
 
 # Get database URL from environment variable
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/gfg")
@@ -42,9 +44,12 @@ async def get_db_dependency() -> AsyncGenerator[AsyncSession, None]:
         finally:
             await session.close()
 
-def get_db() -> AsyncSession:
+async def get_db() -> AsyncSession:
     """Direct database client access for background jobs."""
     return async_session_factory()
 
 # For FastAPI dependency injection
 get_db_for_route = Depends(get_db_dependency)
+
+# Create a db instance that mimics Prisma's interface
+db = DatabaseClient(async_session_factory())

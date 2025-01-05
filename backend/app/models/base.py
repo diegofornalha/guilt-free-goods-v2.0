@@ -1,10 +1,12 @@
 """SQLAlchemy Base model with common fields."""
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import Column, DateTime
 from datetime import datetime
 from typing import Any
 
-Base = declarative_base()
+class Base(DeclarativeBase):
+    """Base class for all models."""
+    pass
 
 class BaseModel(Base):
     """Base model with common timestamp fields."""

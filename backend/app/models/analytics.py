@@ -5,7 +5,7 @@ from uuid import uuid4
 
 from .base import BaseModel
 
-class AnalyticsData(BaseModel):
+class Analytics(BaseModel):
     """Analytics data model for listing performance."""
     __tablename__ = 'analytics_data'
 
@@ -22,6 +22,10 @@ class AnalyticsData(BaseModel):
     
     # Relationships
     listing = relationship("Listing", back_populates="analytics")
+    
+    # Timestamps from Prisma schema
+    created_at = Column(String, nullable=False)
+    updated_at = Column(String, nullable=False)
 
 class AnalyticsSnapshot(BaseModel):
     """Analytics snapshot model for aggregated metrics."""
@@ -33,3 +37,7 @@ class AnalyticsSnapshot(BaseModel):
     top_categories = Column(JSON, nullable=True)
     platform_insights = Column(JSON, nullable=True)
     customer_metrics = Column(JSON, nullable=True)
+    
+    # Timestamps from Prisma schema
+    date = Column(String, nullable=False)
+    created_at = Column(String, nullable=False)

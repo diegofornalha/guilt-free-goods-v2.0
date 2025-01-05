@@ -3,7 +3,7 @@ import pytest
 from unittest.mock import Mock, patch
 from typing import Dict, Any, Optional
 
-from app.services.listing_generation.listing_generator import ListingGenerator, ListingDetails
+from app.services.listing_generation import ListingGenerator, ListingDetails
 from app.services.listing_generation.mobile_formatter import MobileContentFormatter
 
 class MockNLPModel:

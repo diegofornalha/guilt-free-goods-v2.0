@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import List, Optional
-from ..db import db
+from sqlalchemy.ext.asyncio import AsyncSession
+from ..db import get_db_for_route
+from ..db_client import DatabaseClient
 
 router = APIRouter()
 
@@ -26,8 +28,15 @@ class Item(ItemBase):
     class Config:
         from_attributes = True
 
+async def get_db_client(session: AsyncSession = Depends(get_db_for_route)) -> DatabaseClient:
+    """Get database client from session."""
+    return DatabaseClient(session)
+
 @router.post("/", response_model=Item)
-async def create_item(item: ItemCreate):
+async def create_item(
+    item: ItemCreate,
+    db: DatabaseClient = Depends(get_db_client)
+):
     """Create a new item."""
     try:
         created_item = await db.item.create({
@@ -46,8 +55,12 @@ async def create_item(item: ItemCreate):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+
 @router.get("/{item_id}", response_model=Item)
-async def get_item(item_id: str):
+async def get_item(
+    item_id: str,
+    db: DatabaseClient = Depends(get_db_client)
+):
     """Get an item by ID."""
     item = await db.item.find_unique(where={"id": item_id})
     if not item:
@@ -55,7 +68,11 @@ async def get_item(item_id: str):
     return item
 
 @router.get("/", response_model=List[Item])
-async def list_items(skip: int = 0, limit: int = 10):
+async def list_items(
+    skip: int = 0,
+    limit: int = 10,
+    db: DatabaseClient = Depends(get_db_client)
+):
     """List items with pagination."""
     items = await db.item.find_many(
         skip=skip,
@@ -65,7 +82,11 @@ async def list_items(skip: int = 0, limit: int = 10):
     return items
 
 @router.put("/{item_id}", response_model=Item)
-async def update_item(item_id: str, item: ItemCreate):
+async def update_item(
+    item_id: str,
+    item: ItemCreate,
+    db: DatabaseClient = Depends(get_db_client)
+):
     """Update an item."""
     try:
         updated_item = await db.item.update(
@@ -86,7 +107,10 @@ async def update_item(item_id: str, item: ItemCreate):
         raise HTTPException(status_code=404, detail="Item not found")
 
 @router.delete("/{item_id}")
-async def delete_item(item_id: str):
+async def delete_item(
+    item_id: str,
+    db: DatabaseClient = Depends(get_db_client)
+):
     """Delete an item."""
     try:
         await db.item.delete(where={"id": item_id})
