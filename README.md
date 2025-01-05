@@ -24,8 +24,8 @@ guilt-free-goods/
 ## Getting Started
 
 1. Clone the repository
-2. Install dependencies: `npm install`
-3. Start development server: `npm run dev`
+2. Install Dependencies: `npm install`
+3. Start Development Server: `npm run dev`
 
 ## Contributing
 
