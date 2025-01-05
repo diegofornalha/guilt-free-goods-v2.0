@@ -79,10 +79,32 @@ model Order {
   quantity          Int       @default(1)
   totalPrice        Decimal   @default(0.00)
   status            String    // e.g., "pending", "shipped", "delivered"
-  shippingDetails   Json?     // Shipping information
   buyerDetails      Json?     // Buyer information
+  shipment          Shipment?
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
+}
+
+model Shipment {
+  id              String    @id @default(cuid())
+  order           Order     @relation(fields: [orderId], references: [id])
+  orderId         String    @unique  // One-to-one relationship with Order
+  carrier         String    // e.g., "AUS_POST"
+  trackingNumber  String?
+  status          String    // e.g., "PENDING", "SHIPPED"
+  
+  // Australia Post size limits
+  weight          Decimal?  // in kg, max 22kg for domestic
+  length          Int?      // in cm, max 105cm
+  volume          Decimal?  // in cubic metres, max 0.25
+  
+  // Cost optimization fields
+  shippingCost    Decimal   @default(0.00)  // Final shipping cost
+  quotedCosts     Json?     // All carrier quotes received
+  selectedReason  String?   // Why this carrier was selected (e.g., "CHEAPEST", "ONLY_OPTION", "SIZE_LIMITS")
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
 model AnalyticsData {
