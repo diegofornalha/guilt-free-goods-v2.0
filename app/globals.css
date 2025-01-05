@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #2dd4bf;
+  --secondary: #0f766e;
+  --accent: #f59e0b;
+  --background: #ffffff;
+  --text: #1f2937;
+}
+
+@layer base {
+  body {
+    @apply text-gray-800 antialiased bg-white;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold tracking-tight;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700
+           text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl
+           transform hover:-translate-y-0.5 transition-all duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-white border-2 border-teal-500 text-teal-600 hover:bg-teal-50
+           font-semibold py-3 px-6 rounded-xl shadow-md hover:shadow-lg
+           transform hover:-translate-y-0.5 transition-all duration-200;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)]
+           hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] overflow-hidden
+           transform hover:-translate-y-1 transition-all duration-300;
+  }
+
+  .input {
+    @apply w-full px-4 py-3 border-2 border-gray-200 rounded-xl
+           focus:ring-2 focus:ring-teal-400 focus:border-transparent
+           bg-white shadow-sm hover:border-gray-300 transition-colors;
+  }
+
+  .nav-link {
+    @apply relative text-gray-600 hover:text-teal-600 transition-colors duration-200
+           after:content-[''] after:absolute after:bottom-0 after:left-0
+           after:w-0 after:h-0.5 after:bg-teal-500 after:transition-all
+           hover:after:w-full;
+  }
+
+  .hero-section {
+    @apply relative overflow-hidden;
+    background: linear-gradient(
+      100deg,
+      rgba(45, 212, 191, 0.08) 0%,
+      rgba(45, 212, 191, 0.03) 100%
+    );
+  }
+
+  .feature-card {
+    @apply relative overflow-hidden bg-white rounded-2xl p-8
+           border border-gray-100 hover:border-teal-100
+           transform hover:-translate-y-1 transition-all duration-300;
+  }
+
+  .feature-icon {
+    @apply w-14 h-14 bg-gradient-to-br from-teal-50 to-teal-100
+           rounded-2xl flex items-center justify-center mb-6
+           text-3xl shadow-sm;
+  }
+}

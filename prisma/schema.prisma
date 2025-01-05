@@ -7,6 +7,13 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator python {
+  provider = "prisma-client-py"
+  interface = "asyncio"
+  recursive_type_depth = -1
+  enable_experimental_decimal = true
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -31,7 +38,7 @@ model Item {
   listings         Listing[]
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
-  
+
   // AI-related fields
   categoryConfidence Float?
   detectedCategory  String?
@@ -53,7 +60,7 @@ model Listing {
   orders            Order[]
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
-  
+
   // Platform-specific data
   platformData      Json?               // Store platform-specific listing details
   performanceMetrics Json?              // Views, likes, engagement data
@@ -92,17 +99,17 @@ model Shipment {
   carrier         String    // e.g., "AUS_POST"
   trackingNumber  String?
   status          String    // e.g., "PENDING", "SHIPPED"
-  
+
   // Australia Post size limits
   weight          Decimal?  // in kg, max 22kg for domestic
   length          Int?      // in cm, max 105cm
   volume          Decimal?  // in cubic metres, max 0.25
-  
+
   // Cost optimization fields
   shippingCost    Decimal   @default(0.00)  // Final shipping cost
   quotedCosts     Json?     // All carrier quotes received
   selectedReason  String?   // Why this carrier was selected (e.g., "CHEAPEST", "ONLY_OPTION", "SIZE_LIMITS")
-  
+
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 }

@@ -18,7 +18,7 @@
   "editor.multiCursorModifier": "ctrlCmd",
   "editor.snippetSuggestions": "top",
   "terminal.integrated.defaultProfile.windows": "PowerShell",
-  "workbench.colorTheme": "Default Dark+",
+  "workbench.colorTheme": "Default High Contrast Light",
   "[python]": {
     "editor.formatOnType": true,
     "editor.formatOnSave": true,
@@ -31,5 +31,5 @@
     "markdown": true
   },
   "python.analysis.typeCheckingMode": "basic",
-  "jupyter.sendSelectionToInteractiveWindow": true
+  "jupyter.interactiveWindow.textEditor.executeSelection": true
 }
