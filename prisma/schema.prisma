@@ -57,6 +57,7 @@ model Listing {
   // Platform-specific data
   platformData      Json?               // Store platform-specific listing details
   performanceMetrics Json?              // Views, likes, engagement data
+  analytics         AnalyticsData[]     // Relation to analytics data
 }
 
 model MarketResearchData {
@@ -82,6 +83,31 @@ model Order {
   buyerDetails      Json?     // Buyer information
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
+}
+
+model AnalyticsData {
+  id                String    @id @default(uuid())
+  listingId         String
+  listing           Listing   @relation(fields: [listingId], references: [id])
+  viewCount         Int       @default(0)
+  clickCount        Int       @default(0)
+  conversionRate    Float?
+  revenue           Decimal   @default(0.00)
+  profitMargin      Float?
+  platformMetrics   Json?     // Platform-specific performance data
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model AnalyticsSnapshot {
+  id                String    @id @default(uuid())
+  date              DateTime  @default(now())
+  totalRevenue      Decimal   @default(0.00)
+  totalProfit       Decimal   @default(0.00)
+  topCategories     Json?     // Best performing categories
+  platformInsights  Json?     // Cross-platform performance comparison
+  customerMetrics   Json?     // Aggregated customer behavior data
+  createdAt         DateTime  @default(now())
 }
 
 model Conversation {

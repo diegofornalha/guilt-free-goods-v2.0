@@ -35,6 +35,7 @@
     "puppeteer": "^19.x",
     "react": "^18.x",
     "react-dom": "^18.x",
+    "recharts": "^2.15.0",
     "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
