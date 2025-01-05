@@ -1,0 +1,32 @@
+{
+    "categories": [
+        "Weapons",
+        "Ammunition",
+        "Explosives",
+        "Drugs",
+        "Prescription Medications",
+        "Alcohol",
+        "Tobacco",
+        "Counterfeit Items",
+        "Stolen Goods",
+        "Adult Content",
+        "Hazardous Materials"
+    ],
+    "keywords": [
+        "fake",
+        "counterfeit",
+        "replica",
+        "knockoff",
+        "illegal",
+        "stolen",
+        "prohibited",
+        "dangerous",
+        "hazardous",
+        "restricted"
+    ],
+    "restricted_brands": [
+        "CounterfeitBrand",
+        "FakeLuxury",
+        "UnauthorizedReplica"
+    ]
+}

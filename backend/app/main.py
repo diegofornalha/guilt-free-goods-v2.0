@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from typing import List
 import os
 
-from .routers import marketplace, items, item_detection, customer_engagement, analytics
+from .routers import marketplace, items, item_detection, customer_engagement, analytics, compliance
 from .db import init_db, close_db
 
 app = FastAPI(title="Guilt Free Goods API")
@@ -64,6 +64,9 @@ app.include_router(customer_engagement.router, prefix="/api/customer", tags=["cu
 
 # Include analytics router
 app.include_router(analytics.router)
+
+# Include compliance router
+app.include_router(compliance.router)
 
 if __name__ == "__main__":
     import uvicorn
