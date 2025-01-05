@@ -12,7 +12,7 @@ if backend_dir not in sys.path:
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from app.models.base import Base
-from app.db import get_db_dependency
+from app.db import get_db
 
 # Test database URL
 TEST_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@localhost:5432/gfg_test")
@@ -51,7 +51,7 @@ async def client(db_session):
     async def override_get_db():
         yield db_session
     
-    app.dependency_overrides[get_db_dependency] = override_get_db
+    app.dependency_overrides[get_db] = override_get_db
     
     with TestClient(app) as test_client:
         yield test_client

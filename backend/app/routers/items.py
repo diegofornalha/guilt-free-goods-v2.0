@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
-from ..db import get_db_for_route
-from ..db_client import DatabaseClient
+from ..db import get_db
+from ..db_client import DatabaseClient, get_db_client
 
 router = APIRouter()
 
@@ -28,28 +28,27 @@ class Item(ItemBase):
     class Config:
         from_attributes = True
 
-async def get_db_client(session: AsyncSession = Depends(get_db_for_route)) -> DatabaseClient:
+async def get_db_client(session: AsyncSession = Depends(get_db)) -> DatabaseClient:
     """Get database client from session."""
     return DatabaseClient(session)
 
 @router.post("/", response_model=Item)
 async def create_item(
     item: ItemCreate,
-    db: DatabaseClient = Depends(get_db_client)
+    session: AsyncSession = Depends(get_db),
 ):
     """Create a new item."""
     try:
-        created_item = await db.item.create({
-            "data": {
-                "title": item.title,
-                "description": item.description,
-                "price": item.price,
-                "condition": item.condition,
-                "brand": item.brand,
-                "category": item.category,
-                "detection_score": item.detection_score,
-                "image_quality_score": item.image_quality_score
-            }
+        db_client = await get_db_client(session)
+        created_item = await db_client.item.create({
+            "title": item.title,
+            "description": item.description,
+            "price": item.price,
+            "condition": item.condition,
+            "brand": item.brand,
+            "category": item.category,
+            "detection_score": item.detection_score,
+            "image_quality_score": item.image_quality_score
         })
         return created_item
     except Exception as e:

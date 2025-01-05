@@ -1,45 +1,22 @@
-# Dependencies
-node_modules/
-/.pnp
-.pnp.js
+# Credentials
+backend/config/credentials/
+*.json
 
-# Testing
-/coverage
-
-# Production
-/build
-/dist
-
-# Environment files
+# Python
+__pycache__/
+*.py[cod]
+*.class
+.Python
+*.so
+.coverage
+.pytest_cache/
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+venv/
 
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Editor directories and files
-.idea/
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# OS generated files
+# Node
+node_modules/
+.next/
+out/
+build/
+dist/
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
