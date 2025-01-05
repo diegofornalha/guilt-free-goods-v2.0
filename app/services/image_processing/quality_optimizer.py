@@ -12,6 +12,7 @@ from typing import Optional, Tuple
 from PIL import Image, ImageEnhance
 import io
 import logging
+from .watermark import WatermarkService
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +22,7 @@ class ImageQualityOptimizer:
     def __init__(self):
         self.target_resolution = (1200, 1200)  # Standard resolution for product images
         self.quality_threshold = 0.8  # Minimum quality score (0-1)
+        self.watermark_service = WatermarkService()
         
     def optimize_image(self, image_data: bytes) -> Tuple[bytes, dict]:
         """
@@ -50,15 +52,24 @@ class ImageQualityOptimizer:
             image = self._enhance_contrast(image)
             image = self._enhance_sharpness(image)
             
-            # Convert back to bytes
+            # Convert to bytes for watermark service
             output_buffer = io.BytesIO()
-            image.save(output_buffer, format='JPEG', quality=95)
+            image.save(output_buffer, format='PNG', quality=95)
             optimized_image = output_buffer.getvalue()
+            
+            # Apply watermark
+            watermarked_image, watermark_metrics = self.watermark_service.apply_watermark(
+                optimized_image,
+                "Guilt Free Goods",
+                position="bottom-right",
+                opacity=100
+            )
             
             # Calculate quality metrics
             metrics = self._calculate_quality_metrics(image)
+            metrics['watermark'] = watermark_metrics
             
-            return optimized_image, metrics
+            return watermarked_image, metrics
             
         except Exception as e:
             logger.error(f"Error optimizing image: {str(e)}")

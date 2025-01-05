@@ -3,16 +3,35 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from typing import List
 import os
+import logging
 
-from .routers import marketplace, items, item_detection, customer_engagement, analytics
-from .db import init_db, close_db
+from .routers import marketplace, items, item_detection, inventory, customer_engagement, analytics, compliance
+from .db import init_db, close_db, get_db
+
+# Setup logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 
 app = FastAPI(title="Guilt Free Goods API")
 
 # Database lifecycle events
 @app.on_event("startup")
 async def startup_event():
+    """Initialize database and background jobs."""
     await init_db()
+    
+    # Initialize background jobs
+    from .services.background_jobs.item_recheck import ItemRecheckJob
+    
+    try:
+        db = get_db()  # This returns a Prisma client instance
+        recheck_job = ItemRecheckJob(db)
+        await recheck_job.recheck_all_items()
+    except Exception as e:
+        logging.error(f"Failed to initialize background jobs: {str(e)}")
+        # Don't raise the error to allow the app to start without background jobs
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -58,12 +77,16 @@ async def health_check():
 
 # Include item detection router
 app.include_router(item_detection.router)
+app.include_router(inventory.router)
 
 # Include customer engagement router
 app.include_router(customer_engagement.router, prefix="/api/customer", tags=["customer"])
 
 # Include analytics router
 app.include_router(analytics.router)
+
+# Include compliance router
+app.include_router(compliance.router)
 
 if __name__ == "__main__":
     import uvicorn
