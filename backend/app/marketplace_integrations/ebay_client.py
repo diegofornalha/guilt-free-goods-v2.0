@@ -35,7 +35,7 @@ class EbayClient(MarketplaceClient):
         self.access_token: Optional[str] = None
         self.token_expiry: Optional[datetime] = None
 
-    def authenticate(self, *args: Any, **kwargs: Any) -> None:
+    async def authenticate(self) -> None:
         """
         Authenticate with eBay's API using OAuth 2.0.
 
@@ -184,3 +184,61 @@ class EbayClient(MarketplaceClient):
         except Exception as e:
             logger.error(f"Failed to create eBay listing: {str(e)}")
             raise MarketplaceError(f"Failed to create listing on eBay: {str(e)}")
+            
+    async def update_stock(self, listing_id: str, quantity: int) -> None:
+        """Update stock level for an eBay listing.
+        
+        Args:
+            listing_id: ID of the listing to update
+            quantity: New stock quantity
+            
+        Raises:
+            MarketplaceError: If stock update fails
+        """
+        try:
+            # TODO: Implement actual eBay API call
+            # For development, just log the action
+            logger.info(
+                f"Updated stock for eBay listing {listing_id} "
+                f"to {quantity} units"
+            )
+        except Exception as e:
+            logger.error(f"Failed to update eBay stock: {str(e)}")
+            raise MarketplaceError(f"Failed to update stock on eBay: {str(e)}")
+            
+    async def end_listing(self, listing_id: str) -> None:
+        """End an eBay listing.
+        
+        Args:
+            listing_id: ID of the listing to end
+            
+        Raises:
+            MarketplaceError: If ending the listing fails
+        """
+        try:
+            # TODO: Implement actual eBay API call
+            # For development, just log the action
+            logger.info(f"Ended eBay listing {listing_id}")
+        except Exception as e:
+            logger.error(f"Failed to end eBay listing: {str(e)}")
+            raise MarketplaceError(f"Failed to end listing on eBay: {str(e)}")
+            
+    async def get_stock_level(self, listing_id: str) -> Optional[int]:
+        """Get current stock level for an eBay listing.
+        
+        Args:
+            listing_id: ID of the listing to check
+            
+        Returns:
+            Current stock quantity or None if listing not found
+            
+        Raises:
+            MarketplaceError: If fetching stock level fails
+        """
+        try:
+            # TODO: Implement actual eBay API call
+            listing = await self.get_listing(listing_id)
+            return listing.get("quantity")
+        except Exception as e:
+            logger.error(f"Failed to get eBay stock level: {str(e)}")
+            raise MarketplaceError(f"Failed to get stock level from eBay: {str(e)}")
