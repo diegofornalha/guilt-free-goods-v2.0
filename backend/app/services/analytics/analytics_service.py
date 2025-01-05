@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
-from typing import Dict, Any, Optional
-from ...db import prisma
+from typing import Dict, Any, Optional, List
+from ...db import get_db
 
 class AnalyticsService:
     async def calculate_performance_metrics(self, listing_id: str) -> Dict[str, Any]:
@@ -21,11 +21,12 @@ class AnalyticsService:
         """
         try:
             # Fetch analytics data for the listing
-            analytics_data = await prisma.analyticsdata.find_first(
-                where={
-                    "listing_id": listing_id
-                }
-            )
+            async for db in get_db():
+                analytics_data = await db.analyticsdata.find_first(
+                    where={
+                        "listing_id": listing_id
+                    }
+                )
             
             if not analytics_data:
                 return {
@@ -91,10 +92,11 @@ class AnalyticsService:
         """
         try:
             # Get existing analytics data or create new
-            analytics_data = await prisma.analyticsdata.upsert(
-                where={
-                    "listing_id": listing_id
-                },
+            async for db in get_db():
+                analytics_data = await db.analyticsdata.upsert(
+                    where={
+                        "listing_id": listing_id
+                    },
                 data={
                     "create": {
                         "listing_id": listing_id,
@@ -126,3 +128,59 @@ class AnalyticsService:
                 "listing_id": listing_id,
                 "message": str(e)
             }
+            
+    async def get_analytics_data_range(
+        self,
+        start_date: datetime,
+        end_date: datetime
+    ) -> List[Dict[str, Any]]:
+        """
+        Get analytics data for all listings within a date range.
+        
+        Args:
+            start_date: Start of the date range
+            end_date: End of the date range
+            
+        Returns:
+            List of analytics data entries within the date range
+        """
+        try:
+            async for db in get_db():
+                analytics_data = await db.analyticsdata.find_many(
+                where={
+                    "updated_at": {
+                        "gte": start_date,
+                        "lte": end_date
+                    }
+                }
+            )
+            
+            return [data.dict() for data in analytics_data]
+            
+        except Exception as e:
+            print(f"Error fetching analytics data range: {str(e)}")
+            return []
+            
+    async def create_analytics_snapshot(
+        self,
+        timestamp: datetime,
+        metrics: Dict[str, Any]
+    ) -> None:
+        """
+        Create a new analytics snapshot with aggregated metrics.
+        
+        Args:
+            timestamp: Timestamp for the snapshot
+            metrics: Aggregated metrics to store
+        """
+        try:
+            async for db in get_db():
+                await db.analyticssnapshot.create(
+                data={
+                    "timestamp": timestamp,
+                    "metrics": metrics
+                }
+            )
+        except Exception as e:
+            print(f"Error creating analytics snapshot: {str(e)}")
+            raise
