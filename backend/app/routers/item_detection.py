@@ -42,7 +42,7 @@ async def analyze_item(image: UploadFile = File(...)) -> Dict:
         contents = await image.read()
         
         # Analyze image using ProductDetector
-        results = detector.analyze_product(contents)
+        results = await detector.analyze_product(contents)
         
         return {
             "status": "success",
@@ -68,12 +68,16 @@ async def optimize_image(image: UploadFile = File(...)) -> Dict:
     """
     try:
         contents = await image.read()
-        optimized_image = optimizer.optimize(contents)
+        optimized_image = await optimizer.optimize(contents)
+        
+        # Convert optimized image to base64 for JSON response
+        import base64
+        encoded_image = base64.b64encode(optimized_image).decode('utf-8')
         
         return {
             "status": "success",
             "data": {
-                "optimized_image": optimized_image,
+                "optimized_image": encoded_image,
                 "optimization_details": optimizer.get_optimization_details()
             }
         }
@@ -97,12 +101,16 @@ async def remove_background(image: UploadFile = File(...)) -> Dict:
     """
     try:
         contents = await image.read()
-        processed_image = bg_processor.remove_background(contents)
+        processed_image = await bg_processor.remove_background(contents)
+        
+        # Convert processed image to base64 for JSON response
+        import base64
+        encoded_image = base64.b64encode(processed_image).decode('utf-8')
         
         return {
             "status": "success",
             "data": {
-                "processed_image": processed_image,
+                "processed_image": encoded_image,
                 "processing_details": bg_processor.get_processing_details()
             }
         }
@@ -126,7 +134,7 @@ async def detect_brand(image: UploadFile = File(...)) -> Dict:
     """
     try:
         contents = await image.read()
-        results = detector.analyze_product(contents)
+        results = await detector.analyze_product(contents)
         
         return {
             "status": "success",
@@ -152,7 +160,7 @@ async def assess_condition(image: UploadFile = File(...)) -> Dict:
     """
     try:
         contents = await image.read()
-        results = detector.analyze_product(contents)
+        results = await detector.analyze_product(contents)
         
         return {
             "status": "success",
@@ -178,7 +186,7 @@ async def detect_size(image: UploadFile = File(...)) -> Dict:
     """
     try:
         contents = await image.read()
-        results = detector.analyze_product(contents)
+        results = await detector.analyze_product(contents)
         
         return {
             "status": "success",

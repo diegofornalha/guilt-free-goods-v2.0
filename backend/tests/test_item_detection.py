@@ -4,7 +4,7 @@ Test suite for item detection endpoints and functionality.
 
 import pytest
 from fastapi.testclient import TestClient
-from ..app.main import app
+from app.main import app
 import os
 from pathlib import Path
 

@@ -3,8 +3,10 @@ from typing import Dict, List, Optional
 from pydantic import BaseModel
 import json
 from pathlib import Path
-from prisma import Prisma
+from sqlalchemy.orm import Session
+from sqlalchemy import select
 from ..db import get_db
+from ..models.item import Item
 
 router = APIRouter(
     prefix="/api/compliance",
@@ -38,7 +40,7 @@ def load_restricted_items() -> Dict:
 @router.get("/check/{item_id}", response_model=ComplianceResult)
 async def check_item_compliance(
     item_id: int,
-    db: Prisma = Depends(get_db)
+    db: Session = Depends(get_db)
 ) -> ComplianceResult:
     """
     Check if an item complies with marketplace guidelines by verifying:
@@ -47,7 +49,9 @@ async def check_item_compliance(
     - Brand authenticity (if applicable)
     """
     # Get item details from database
-    item = await db.get_item(item_id)
+    stmt = select(Item).where(Item.id == item_id)
+    result = db.execute(stmt)
+    item = result.scalar_one_or_none()
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
     
@@ -87,7 +91,7 @@ async def check_item_compliance(
 @router.post("/validate", response_model=ComplianceResult)
 async def validate_item_compliance(
     item: ComplianceCheck,
-    db: Prisma = Depends(get_db)
+    db: Session = Depends(get_db)
 ) -> ComplianceResult:
     """
     Validate an item's compliance before it's added to the system
@@ -115,6 +119,14 @@ async def validate_item_compliance(
         brand_verification_passed = item.brand.lower() not in [b.lower() for b in restricted_config["restricted_brands"]]
         if not brand_verification_passed:
             issues.append(f"Brand '{item.brand}' is restricted or flagged")
+    
+    # Check if item exists in database
+    if item.item_id:
+        stmt = select(Item).where(Item.id == item.item_id)
+        result = db.execute(stmt)
+        existing_item = result.scalar_one_or_none()
+        if not existing_item:
+            raise HTTPException(status_code=404, detail="Item not found")
     
     return ComplianceResult(
         item_id=item.item_id,

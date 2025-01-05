@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Dict, Any
 from fastapi import APIRouter, Depends, HTTPException
 
-from ..db import get_db_for_route
+from ..db import get_db
 from ..marketplace_integrations.cross_platform_sync import CrossPlatformSync
 
 router = APIRouter(prefix="/inventory", tags=["inventory"])
@@ -13,7 +13,7 @@ sync_service = CrossPlatformSync()
 async def update_stock_level(
     item_id: str,
     total_stock: int,
-    db=Depends(get_db_for_route)
+    db=Depends(get_db)
 ) -> Dict[str, Any]:
     """Update stock level for an item across all marketplaces.
     
@@ -74,7 +74,7 @@ async def update_stock_level(
 @router.get("/{item_id}/stock")
 async def get_stock_level(
     item_id: str,
-    db=Depends(get_db_for_route)
+    db=Depends(get_db)
 ) -> Dict[str, Any]:
     """Get current stock level for an item.
     
