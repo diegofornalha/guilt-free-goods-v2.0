@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from typing import List
 import os
 
-from .routers import marketplace, items, item_detection
+from .routers import marketplace, items, item_detection, customer_engagement
 from .db import init_db, close_db
 
 app = FastAPI(title="Guilt Free Goods API")
@@ -58,6 +58,9 @@ async def health_check():
 
 # Include item detection router
 app.include_router(item_detection.router)
+
+# Include customer engagement router
+app.include_router(customer_engagement.router, prefix="/api/customer", tags=["customer"])
 
 if __name__ == "__main__":
     import uvicorn
